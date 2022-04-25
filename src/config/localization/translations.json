@@ -577,7 +577,6 @@
   "See All": "See All",
   "Your voting power is determined by the amount of CAKE you held at the block detailed below. CAKE held in other places does not contribute to your voting power.": "Your voting power is determined by the amount of CAKE you held at the block detailed below. CAKE held in other places does not contribute to your voting power.",
   "Wallet": "Wallet",
-  "Manual CAKE Pool": "Manual CAKE Pool",
   "Auto CAKE Pool": "Auto CAKE Pool",
   "CAKE BNB LP": "CAKE BNB LP",
   "Other Syrup Pools": "Other Syrup Pools",
@@ -1665,5 +1664,11 @@
   "Mobox Avatar NFT": "Mobox Avatar NFT",
   "Your Mobox Avatars NFT prizes will be airdropped to your wallet address before 00:00 UTC 25th April.": "Your Mobox Avatars NFT prizes will be airdropped to your wallet address before 00:00 UTC 25th April.",
   "The lock period has ended. Convert to flexible staking or renew your position to start a new lock staking.": "The lock period has ended. Convert to flexible staking or renew your position to start a new lock staking.",
-  "The lock period has ended. To avoid more rewards being burned, convert to flexible staking or renew your position to start a new lock staking.": "The lock period has ended. To avoid more rewards being burned, convert to flexible staking or renew your position to start a new lock staking."
+  "The lock period has ended. To avoid more rewards being burned, convert to flexible staking or renew your position to start a new lock staking.": "The lock period has ended. To avoid more rewards being burned, convert to flexible staking or renew your position to start a new lock staking.",
+  "Your MBOX volume rank": "Your MBOX volume rank",
+  "Based on your MBOX/BNB and MBOX/BUSD trading": "Based on your MBOX/BNB and MBOX/BUSD trading",
+  "Calculated based on current rates and subject to change based on pool conditions. It is an estimate provided for your convenience only, and by no means represents guaranteed returns.": "Calculated based on current rates and subject to change based on pool conditions. It is an estimate provided for your convenience only, and by no means represents guaranteed returns.",
+  "You will be able to withdraw the staked CAKE and profit only when the staking position is unlocked, i.e. when the staking period ends.": "You will be able to withdraw the staked CAKE and profit only when the staking position is unlocked, i.e. when the staking period ends.",
+  "View Tutorial": "View Tutorial",
+  "CAKE Pool": "CAKE Pool"
 }
