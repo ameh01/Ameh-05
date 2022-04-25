@@ -8,8 +8,12 @@ import { createAsyncThunk, createSlice, isAnyOf } from '@reduxjs/toolkit'
 import stringify from 'fast-json-stable-stringify'
 import farmsConfig from 'config/constants/farms'
 import { isArchivedPid } from 'utils/farmHelpers'
+import multicall from 'utils/multicall'
+import masterchefABI from 'config/abi/masterchef.json'
+import { getMasterChefAddress } from 'utils/addressHelpers'
+import { getBalanceAmount } from 'utils/formatBalance'
+import { ethersToBigNumber } from 'utils/bigNumber'
 import type { AppState } from 'state'
-import priceHelperLpsConfig from 'config/constants/priceHelperLps'
 import fetchFarms from './fetchFarms'
 import getFarmsPrices from './getFarmsPrices'
 import {
@@ -43,7 +47,7 @@ export const nonArchivedFarms = farmsConfig.filter(({ pid }) => !isArchivedPid(p
 
 // Async thunks
 export const fetchFarmsPublicDataAsync = createAsyncThunk<
-  [SerializedFarm[], number],
+  [SerializedFarm[], number, number],
   number[],
   {
     state: AppState
@@ -51,21 +55,27 @@ export const fetchFarmsPublicDataAsync = createAsyncThunk<
 >(
   'farms/fetchFarmsPublicDataAsync',
   async (pids) => {
-    const poolLength = await fetchMasterChefFarmPoolLength()
+    const masterChefAddress = getMasterChefAddress()
+    const calls = [
+      {
+        address: masterChefAddress,
+        name: 'poolLength',
+      },
+      {
+        address: masterChefAddress,
+        name: 'cakePerBlock',
+        params: [true],
+      },
+    ]
+    const [[poolLength], [cakePerBlockRaw]] = await multicall(masterchefABI, calls)
+    const regularCakePerBlock = getBalanceAmount(ethersToBigNumber(cakePerBlockRaw))
     const farmsToFetch = farmsConfig.filter((farmConfig) => pids.includes(farmConfig.pid))
     const farmsCanFetch = farmsToFetch.filter((f) => poolLength.gt(f.pid))
 
-    // Add price helper farms
-    const farmsWithPriceHelpers = farmsCanFetch.concat(priceHelperLpsConfig)
-
-    const farms = await fetchFarms(farmsWithPriceHelpers)
+    const farms = await fetchFarms(farmsCanFetch)
     const farmsWithPrices = getFarmsPrices(farms)
 
-    // Filter out price helper LP config farms
-    const farmsWithoutHelperLps = farmsWithPrices.filter((farm: SerializedFarm) => {
-      return farm.pid || farm.pid === 0
-    })
-    return [farmsWithoutHelperLps, poolLength.toNumber()]
+    return [farmsWithPrices, poolLength.toNumber(), regularCakePerBlock.toNumber()]
   },
   {
     condition: (arg, { getState }) => {
@@ -164,12 +174,13 @@ export const farmsSlice = createSlice({
     })
     // Update farms with live data
     builder.addCase(fetchFarmsPublicDataAsync.fulfilled, (state, action) => {
-      const [farmPayload, poolLength] = action.payload
+      const [farmPayload, poolLength, regularCakePerBlock] = action.payload
       state.data = state.data.map((farm) => {
         const liveFarmData = farmPayload.find((farmData) => farmData.pid === farm.pid)
         return { ...farm, ...liveFarmData }
       })
       state.poolLength = poolLength
+      state.regularCakePerBlock = regularCakePerBlock
     })
 
     // Update farms with user data

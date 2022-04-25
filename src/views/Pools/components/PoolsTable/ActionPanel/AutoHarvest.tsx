@@ -94,7 +94,7 @@ const AutoHarvestAction: React.FunctionComponent<AutoHarvestActionProps> = ({
               {hasAutoEarnings ? (
                 <>
                   <BalanceWithLoading lineHeight="1" bold fontSize="20px" decimals={5} value={autoCakeToDisplay} />
-                  {earningTokenPrice > 0 && (
+                  {Number.isFinite(earningTokenPrice) && earningTokenPrice > 0 && (
                     <BalanceWithLoading
                       display="inline"
                       fontSize="12px"
@@ -117,7 +117,7 @@ const AutoHarvestAction: React.FunctionComponent<AutoHarvestActionProps> = ({
             </>
           </Flex>
           <Flex flex="1.3" flexDirection="column" alignSelf="flex-start" alignItems="flex-start">
-            {hasAutoEarnings && vaultPosition === VaultPosition.Flexible && (
+            {[VaultPosition.Flexible, VaultPosition.None].includes(vaultPosition) && (
               <UnstakingFeeCountdownRow vaultKey={vaultKey} isTableVariant />
             )}
             {/* IFO credit here */}
